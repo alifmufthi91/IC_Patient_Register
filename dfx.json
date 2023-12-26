@@ -1,0 +1,13 @@
+{
+    "canisters": {
+        "clinic_registration": {
+            "type": "custom",
+            "main": "src/index.ts",
+            "candid": "src/index.did",
+            "build": "npx azle clinic_registration",
+            "wasm": ".azle/clinic_registration/clinic_registration.wasm",
+            "gzip": true
+        }
+    }
+}
+

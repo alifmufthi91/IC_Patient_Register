@@ -1,0 +1,14 @@
+{
+    "scripts": {
+        "dfx_install": "DFX_VERSION=0.15.1 sh -ci \"$(curl -fsSL https://sdk.dfinity.org/install.sh)\"",
+        "replica_start": "dfx start --background",
+        "replica_stop": "dfx stop",
+        "canister_deploy_local": "dfx deploy clinic_registration",
+        "canister_deploy_mainnet": "dfx deploy --network ic clinic_registration",
+        "canister_uninstall": "dfx canister uninstall-code clinic_registration"
+    },
+    "dependencies": {
+        "azle": "0.19.0"
+    }
+}
+
