@@ -1,0 +1,8 @@
+service: () -> {
+    getPatients: () -> (vec record {id:nat64; age:nat8; name:text; blood_type:text; gender:text}) query;
+    getQuota: (nat32) -> (nat32) query;
+    getQuotaConfig: (text) -> (nat32) query;
+    makeAppointment: (nat64, nat32) -> (opt text);
+    registerPatient: (text, nat8, text, text) -> ();
+    setQuotaConfig: (text, nat32) -> ();
+}
