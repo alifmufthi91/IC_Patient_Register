@@ -8,7 +8,6 @@
         "canister_uninstall": "dfx canister uninstall-code clinic_registration"
     },
     "dependencies": {
-        "azle": "0.19.0"
+        "azle": "^0.19.0"
     }
 }
-

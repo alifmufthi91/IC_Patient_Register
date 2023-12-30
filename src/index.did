@@ -1,4 +1,7 @@
 service: () -> {
+    cancelAppointment: (nat64, nat32) -> (opt text);
+    getAppointment: () -> (vec record {date:nat32; quota_left:nat32; patients:vec nat64}) query;
+    getAppointmentPerDay: (nat32) -> (opt record {date:nat32; quota_left:nat32; patients:vec nat64}) query;
     getPatients: () -> (vec record {id:nat64; age:nat8; name:text; blood_type:text; gender:text}) query;
     getQuota: (nat32) -> (nat32) query;
     getQuotaConfig: (text) -> (nat32) query;

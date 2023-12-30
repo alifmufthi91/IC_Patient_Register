@@ -107,6 +107,44 @@ export default Canister({
         updateAppointment.quota_left--
         appointmentStorage.insert(updateAppointment.date, updateAppointment)
         return None
-    })
+    }),
+
+    cancelAppointment: update([nat64, nat32], Opt(text), (patient_id, date_unix) => {
+        const patient = patientStorage.get(patient_id)
+        if (patient == None) {
+            return Some("patient not found")
+        }
+        const patientId = patient.Some
+
+        const appointment = appointmentStorage.get(date_unix)
+
+        const updateAppointment = appointment.Some
+
+        if (!updateAppointment?.patients.includes(patient_id)) {
+            return Some("patient not found on selected date")
+        }
+
+        // filter selected patient from appointment date
+        updateAppointment.patients = updateAppointment.patients.filter(patient => patient !== patient_id)
+        
+        updateAppointment.quota_left++
+
+        appointmentStorage.insert(updateAppointment.date, updateAppointment)
+
+        return None
+    }),
+
+    getAppointmentPerDay: query([nat32], Opt(Appointment), (date_unix) => {
+        const result = appointmentStorage.get(date_unix)
+        if (result.Some){
+            return result
+        }
+        return None
+    }),
+
+    getAppointment: query([], Vec(Appointment), () => {
+        return appointmentStorage.values();
+    }),
+
 });
 
