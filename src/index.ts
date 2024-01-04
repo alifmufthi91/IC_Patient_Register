@@ -29,6 +29,11 @@ let appointmentStorage = StableBTreeMap<nat32, Appointment>(2)
 // constant
 const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
+function getDayFromTimestamp(timestamp: nat32): string {
+    const date = new Date(timestamp * 1000);
+    return days[date.getDay()];
+}
+
 export default Canister({
 
     registerPatient: update([text, nat8, text, text], Void, (name, age, gender, blood_type) => {
@@ -59,17 +64,20 @@ export default Canister({
     }),
 
     getQuota: query([nat32], nat32, (date_unix) => {
-        const result = appointmentStorage.get(date_unix)
-        if (result == None) {
-            const date = new Date(date_unix * 1000)
-            const day = days[date.getDay()]
-            const quotaConfig = quotaConfiguration.get(day)
-            if (quotaConfig == None) {
-                return 0
-            }
-            return quotaConfig.Some!
+        const day = getDayFromTimestamp(date_unix);
+        const quotaConfig = quotaConfiguration.get(day);
+
+        if (quotaConfig == None) {
+            return 0;
         }
-        return result.Some?.quota_left!
+
+        const appointment = appointmentStorage.get(date_unix);
+
+        if (appointment == None) {
+            return quotaConfig.Some!;
+        }
+
+        return appointment.Some!.quota_left!;
     }),
 
     makeAppointment: update([nat64, nat32], Opt(text), (patient_id, date_unix) => {
@@ -126,7 +134,7 @@ export default Canister({
 
         // filter selected patient from appointment date
         updateAppointment.patients = updateAppointment.patients.filter(patient => patient !== patient_id)
-        
+
         updateAppointment.quota_left++
 
         appointmentStorage.insert(updateAppointment.date, updateAppointment)
@@ -136,7 +144,7 @@ export default Canister({
 
     getAppointmentPerDay: query([nat32], Opt(Appointment), (date_unix) => {
         const result = appointmentStorage.get(date_unix)
-        if (result.Some){
+        if (result.Some) {
             return result
         }
         return None
